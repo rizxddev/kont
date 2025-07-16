@@ -1,27 +1,26 @@
-#!/bin/bash
-set -e
-
 REPO="https://raw.githubusercontent.com/rizxddev/kont/main/"
-
-# === Unduh file systemd service
-wget -q -O /etc/systemd/system/limitvmess.service "${REPO}limit/limitvmess.service"
-wget -q -O /etc/systemd/system/limitvless.service "${REPO}limit/limitvless.service"
-wget -q -O /etc/systemd/system/limittrojan.service "${REPO}limit/limittrojan.service"
-wget -q -O /etc/systemd/system/limitshadowsocks.service "${REPO}limit/limitshadowsocks.service"
-
-# === Unduh script limit untuk masing-masing protocol
-wget -q -O /etc/xray/limit.vmess "${REPO}limit/vmess"
-wget -q -O /etc/xray/limit.vless "${REPO}limit/vless"
-wget -q -O /etc/xray/limit.trojan "${REPO}limit/trojan"
-wget -q -O /etc/xray/limit.shadowsocks "${REPO}limit/shadowsocks"
-
-# === Set permission
-chmod +x /etc/xray/limit.*
-
-# === Reload & aktifkan service
-systemctl daemon-reexec
+wget -q -O /etc/systemd/system/limitvmess.service "${REPO}limit/limitvmess.service" && chmod +x limitvmess.service >/dev/null 2>&1
+wget -q -O /etc/systemd/system/limitvless.service "${REPO}limit/limitvless.service" && chmod +x limitvless.service >/dev/null 2>&1
+wget -q -O /etc/systemd/system/limittrojan.service "${REPO}limit/limittrojan.service" && chmod +x limittrojan.service >/dev/null 2>&1
+wget -q -O /etc/systemd/system/limitshadowsocks.service "${REPO}limit/limitshadowsocks.service" && chmod +x limitshadowsocks.service >/dev/null 2>&1
+wget -q -O /etc/xray/limit.vmess "${REPO}limit/vmess" >/dev/null 2>&1
+wget -q -O /etc/xray/limit.vless "${REPO}limit/vless" >/dev/null 2>&1
+wget -q -O /etc/xray/limit.trojan "${REPO}limit/trojan" >/dev/null 2>&1
+wget -q -O /etc/xray/limit.shadowsocks "${REPO}limit/shadowsocks" >/dev/null 2>&1
+chmod +x /etc/xray/limit.vmess
+chmod +x /etc/xray/limit.vless
+chmod +x /etc/xray/limit.trojan
+chmod +x /etc/xray/limit.shadowsocks
 systemctl daemon-reload
-
-systemctl enable --now limitvmess limitvless limittrojan limitshadowsocks
-
-echo -e "\e[92m[+] Semua limit service berhasil diaktifkan dan berjalan.\e[0m"
+systemctl enable --now limitvmess
+systemctl enable --now limitvless
+systemctl enable --now limittrojan
+systemctl enable --now limitshadowsocks
+# systemctl start limitvmess
+# systemctl start limitvless
+# systemctl start limittrojan
+# systemctl start limitshadowsocks
+# systemctl restart limitvmess
+# systemctl restart limitvless
+# systemctl restart limittrojan
+# systemctl restart limitshadowsocks
