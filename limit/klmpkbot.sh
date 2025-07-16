@@ -1,53 +1,51 @@
 #!/bin/bash
-set -e
-
-NS=$(cat /etc/xray/dns 2>/dev/null || echo "NS_NOT_FOUND")
-PUB=$(cat /etc/slowdns/server.pub 2>/dev/null || echo "PUB_NOT_FOUND")
-domain=$(cat /etc/xray/domain 2>/dev/null || echo "domain.com")
-
-# === Install dependensi Python dan alat pendukung ===
-if command -v apt >/dev/null 2>&1; then
-    apt update -y && apt upgrade -y
-    apt install -y python3 python3-pip git unzip wget
-else
-    apt-get update -y && apt-get upgrade -y
-    apt-get install -y python3 python3-pip git unzip wget
-fi
-
-# === Download dan pasang file bot ===
-cd /usr/bin
-wget -q https://raw.githubusercontent.com/rizxddev/kont/main/limit/bot.zip -O bot.zip
-unzip -o bot.zip
-mv bot/* /usr/bin || true
-chmod +x /usr/bin/*
-rm -rf bot.zip bot
-
+NS=$( cat /etc/xray/dns )
+PUB=$( cat /etc/slowdns/server.pub )
+domain=$(cat /etc/xray/domain)
+#color
+grenbo="\e[92;1m"
+NC='\e[0m'
+#install
 cd /root
-wget -q https://raw.githubusercontent.com/rizxddev/kont/main/limit/regis.zip -O regis.zip
-unzip -o regis.zip -d regis
+rm -rf regis
+#install
+apt update && apt upgrade
+apt install python3 python3-pip git
+cd /usr/bin
+wget https://raw.githubusercontent.com/rizxddev/kont/main/limit/bot.zip
+unzip bot.zip
+mv bot/* /usr/bin
+chmod +x /usr/bin/*
+rm -rf bot.zip
+cd /root
+wget https://raw.githubusercontent.com/rizxddev/kont/main/limit/regis.zip
+unzip regis.zip
 rm -rf regis.zip
+pip3 install -r regis/requirements.txt
+pip3 install pillow
 
-# === Install dependensi bot Python ===
-pip3 install -r regis/requirements.txt || true
-pip3 install pillow || true
+#isi data
+echo ""
+echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+echo -e " \e[1;97;101m          ADD BOT PANEL          \e[0m"
+echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+echo -e "${grenbo}Tutorial Creat Bot and ID Telegram${NC}"
+echo -e "${grenbo}[*] Creat Bot and Token Bot : @BotFather${NC}"
+echo -e "${grenbo}[*] Info Id Telegram : @MissRose_bot , perintah /info${NC}"
+echo -e "${grenbo}[*] Bot By Rizky store Tunneling${NC}"
+echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+read -e -p "[*] Input your Bot Token : " bottoken
+read -e -p "[*] Input Your Id Telegram :" admin
+echo -e BOT_TOKEN='"'$bottoken'"' >> /root/regis/var.txt
+echo -e ADMIN='"'$admin'"' >> /root/regis/var.txt
+echo -e DOMAIN='"'$domain'"' >> /root/regis/var.txt
+echo -e PUB='"'$PUB'"' >> /root/regis/var.txt
+echo -e HOST='"'$NS'"' >> /root/regis/var.txt
+clear
 
-# === Input Token & ID ===
-echo -e "\033[1;36mMasukkan Token Bot dan ID Telegram Admin\033[0m"
-read -rp "[*] BOT TOKEN: " bottoken
-read -rp "[*] ADMIN ID : " admin
-
-cat <<EOF > /root/regis/var.txt
-BOT_TOKEN="$bottoken"
-ADMIN="$admin"
-DOMAIN="$domain"
-PUB="$PUB"
-HOST="$NS"
-EOF
-
-# === Buat service bot ===
-cat >/etc/systemd/system/regis.service <<END
+cat > /etc/systemd/system/regis.service << END
 [Unit]
-Description=Telegram Bot Panel
+Description=Simple register - @Burhanssh
 After=network.target
 
 [Service]
@@ -59,14 +57,20 @@ Restart=always
 WantedBy=multi-user.target
 END
 
-systemctl daemon-reload
-systemctl enable --now regis
+systemctl start regis 
+systemctl enable regis
+cd /root
+rm -rf klmpkbot.sh
+echo "Done"
+echo "Your Data Bot"
+echo -e "==============================="
+echo "Token Bot         : $bottoken"
+echo "Admin          : $admin"
+echo "Domain        : $domain"
+echo "Pub            : $PUB"
+echo "Host           : $NS"
+echo -e "==============================="
+echo "Setting done"
+clear
 
-# === Info ===
-echo -e "\n\033[92mBot telah diaktifkan dan berjalan.\033[0m"
-echo "Token   : $bottoken"
-echo "Admin   : $admin"
-echo "Domain  : $domain"
-echo "PubKey  : $PUB"
-echo "NSHost  : $NS"
-echo -e "\nSilakan ketik /menu pada bot Telegram Anda."
+echo " Installations complete, type /menu on your bot"
