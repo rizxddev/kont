@@ -1,7 +1,7 @@
 
 
 ### INSTALL SCRIPT 
-<pre><code>apt update -y && apt upgrade -y && apt install -y wget curl ruby unzip socat net-tools cron iptables-persistent lsof gnupg && gem install lolcat && wget -q https://raw.githubusercontent.com/rizxddev/kont/main/premi.sh && chmod +x premi.sh && ./premi.sh
+<pre><code>apt install -y && apt update -y && apt upgrade -y && apt install lolcat wget curl -y && gem install lolcat && wget -q https://raw.githubusercontent.com/rizxddev/kont/main/premi.sh && chmod +x premi.sh && ./premi.sh
 </code></pre>
 
 
