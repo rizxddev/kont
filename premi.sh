@@ -1,4 +1,8 @@
 #!/bin/bash
+# ===== PATCH: pastikan semua paket wajib terinstall =====
+apt-get update -y
+apt-get install -y netfilter-persistent iptables-persistent openvpn fail2ban dropbear vnstat cron nginx haproxy chrony sudo wget curl unzip zip
+
 ### Color
 apt upgrade -y
 apt update -y
@@ -611,9 +615,8 @@ clear
 print_install "Memasang SSHD"
 wget -q -O /etc/ssh/sshd_config "${REPO}limit/sshd" >/dev/null 2>&1
 chmod 700 /etc/ssh/sshd_config
-/etc/init.d/ssh restart
-systemctl restart ssh
-/etc/init.d/ssh status
+systemctl restart ssh 2>/dev/null
+systemctl status ssh 2>/dev/null
 print_success "SSHD"
 }
 
@@ -625,8 +628,8 @@ print_install "Menginstall Dropbear"
 apt-get install dropbear -y > /dev/null 2>&1
 wget -q -O /etc/default/dropbear "${REPO}limit/dropbear.conf"
 chmod +x /etc/default/dropbear
-/etc/init.d/dropbear restart
-/etc/init.d/dropbear status
+systemctl restart dropbear 2>/dev/null
+systemctl status dropbear 2>/dev/null
 print_success "Dropbear"
 }
 
@@ -636,7 +639,7 @@ clear
 print_install "Menginstall Vnstat"
 # setting vnstat
 apt -y install vnstat > /dev/null 2>&1
-/etc/init.d/vnstat restart
+systemctl restart vnstat 2>/dev/null
 apt -y install libsqlite3-dev > /dev/null 2>&1
 wget https://humdi.net/vnstat/vnstat-2.6.tar.gz
 tar zxvf vnstat-2.6.tar.gz
@@ -647,8 +650,8 @@ vnstat -u -i $NET
 sed -i 's/Interface "'""eth0""'"/Interface "'""$NET""'"/g' /etc/vnstat.conf
 chown vnstat:vnstat /var/lib/vnstat -R
 systemctl enable vnstat
-/etc/init.d/vnstat restart
-/etc/init.d/vnstat status
+systemctl restart vnstat 2>/dev/null
+systemctl status vnstat 2>/dev/null
 rm -f /root/vnstat-2.6.tar.gz
 rm -rf /root/vnstat-2.6
 print_success "Vnstat"
@@ -659,7 +662,7 @@ clear
 print_install "Menginstall OpenVPN"
 #OpenVPN
 wget ${REPO}limit/openvpn &&  chmod +x openvpn && ./openvpn
-/etc/init.d/openvpn restart
+systemctl restart openvpn 2>/dev/null
 print_success "OpenVPN"
 }
 
@@ -795,14 +798,14 @@ print_success "ePro WebSocket Proxy"
 function ins_restart(){
 clear
 print_install "Restarting  All Packet"
-/etc/init.d/nginx restart
-/etc/init.d/openvpn restart
-/etc/init.d/ssh restart
-/etc/init.d/dropbear restart
-/etc/init.d/fail2ban restart
-/etc/init.d/vnstat restart
-systemctl restart haproxy
-/etc/init.d/cron restart
+systemctl restart nginx 2>/dev/null
+systemctl restart openvpn 2>/dev/null
+systemctl restart ssh 2>/dev/null
+systemctl restart dropbear 2>/dev/null
+systemctl restart fail2ban 2>/dev/null
+systemctl restart vnstat 2>/dev/null
+systemctl restart haproxy 2>/dev/null
+systemctl restart cron 2>/dev/null
     systemctl daemon-reload
     systemctl start netfilter-persistent
     systemctl enable --now nginx
